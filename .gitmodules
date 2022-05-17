@@ -1,0 +1,3 @@
+[submodule "xilinx-qdma-for-opennic"]
+	path = xilinx-qdma-for-opennic
+	url = ../xilinx-qdma-for-opennic
