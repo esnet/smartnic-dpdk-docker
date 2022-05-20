@@ -96,7 +96,9 @@ RUN \
     jq \
     lsb-release \
     pciutils \
+    tshark \
     unzip \
+    vim-tiny \
     zstd \
     && \
   pip3 install \
