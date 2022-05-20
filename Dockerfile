@@ -65,19 +65,27 @@ RUN \
   apt-get update -y && \
   apt-get upgrade -y && \
   apt-get install -y --no-install-recommends \
-    git \
+    liblua5.3-dev \
     make \
     && \
   apt-get autoclean && \
   apt-get autoremove && \
   rm -rf /var/lib/apt/lists/*
 
+ARG PKTGEN_BASE_URL="https://github.com/pktgen/Pktgen-DPDK/archive/refs/tags"
+ARG PKTGEN_VER=22.04.1
+ARG PKTGEN_TOPDIR="Pktgen-DPDK-pktgen-${PKTGEN_VER}"
 RUN \
-  git clone http://dpdk.org/git/apps/pktgen-dpdk && \
-    cd pktgen-dpdk && \
-    make && \
-    make install
-    
+  wget -q $PKTGEN_BASE_URL/pktgen-$PKTGEN_VER.tar.gz && \
+    tar xaf pktgen-$PKTGEN_VER.tar.gz && \
+    rm pktgen-$PKTGEN_VER.tar.gz && \
+    cd $PKTGEN_TOPDIR && \
+    export PKTGEN_DESTDIR=/ && \
+    make buildlua && \
+    make install && \
+    cd .. && \
+    rm -r $PKTGEN_TOPDIR
+
 # Install some useful tools to have inside of this container
 RUN \
   ln -fs /usr/share/zoneinfo/UTC /etc/localtime && \
