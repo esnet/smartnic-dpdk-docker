@@ -94,6 +94,8 @@ RUN \
   apt-get install -y --no-install-recommends \
     iproute2 \
     jq \
+    libgrpc++1 \
+    libprotobuf17 \
     lsb-release \
     pciutils \
     tshark \
