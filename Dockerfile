@@ -98,6 +98,8 @@ RUN \
     libprotobuf17 \
     lsb-release \
     pciutils \
+    python3-scapy \
+    tcpreplay \
     tshark \
     unzip \
     vim-tiny \
