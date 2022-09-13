@@ -44,7 +44,7 @@ COPY 0000-dpdk-include-xilinx-qdma-driver.patch /0000-dpdk-include-xilinx-qdma-d
 
 # Download build and install DPDK
 ARG DPDK_BASE_URL="https://fast.dpdk.org/rel"
-ARG DPDK_VER="21.11.1"
+ARG DPDK_VER="21.11.2"
 #ARG DPDK_TOPDIR="dpdk-${DPDK_VER}"
 ARG DPDK_TOPDIR="dpdk-stable-${DPDK_VER}"
 RUN \
