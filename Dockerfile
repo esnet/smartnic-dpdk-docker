@@ -13,9 +13,11 @@ RUN \
   apt-get upgrade -y && \
   apt-get install -y --no-install-recommends \
     build-essential \
+    libbpf-dev \
     libbsd-dev \
     libnuma-dev \
     libpcap-dev \
+    libssl-dev \
     locales \
     ninja-build \
     pkg-config \
@@ -26,6 +28,7 @@ RUN \
     python3-setuptools \
     python3-wheel \
     wget \
+    zlib1g-dev \
     && \
   pip3 install \
     meson \
