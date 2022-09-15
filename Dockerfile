@@ -1,4 +1,5 @@
-FROM ubuntu:focal
+ARG DOCKERHUB_PROXY
+FROM ${DOCKERHUB_PROXY}library/ubuntu:focal
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV LC_ALL C.UTF-8
