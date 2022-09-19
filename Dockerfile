@@ -1,4 +1,5 @@
-FROM ubuntu:focal
+ARG DOCKERHUB_PROXY
+FROM ${DOCKERHUB_PROXY}library/ubuntu:focal
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV LC_ALL C.UTF-8
@@ -13,9 +14,11 @@ RUN \
   apt-get upgrade -y && \
   apt-get install -y --no-install-recommends \
     build-essential \
+    libbpf-dev \
     libbsd-dev \
     libnuma-dev \
     libpcap-dev \
+    libssl-dev \
     locales \
     ninja-build \
     pkg-config \
@@ -26,6 +29,7 @@ RUN \
     python3-setuptools \
     python3-wheel \
     wget \
+    zlib1g-dev \
     && \
   pip3 install \
     meson \
@@ -41,7 +45,7 @@ COPY 0000-dpdk-include-xilinx-qdma-driver.patch /0000-dpdk-include-xilinx-qdma-d
 
 # Download build and install DPDK
 ARG DPDK_BASE_URL="https://fast.dpdk.org/rel"
-ARG DPDK_VER="21.11.1"
+ARG DPDK_VER="21.11.2"
 #ARG DPDK_TOPDIR="dpdk-${DPDK_VER}"
 ARG DPDK_TOPDIR="dpdk-stable-${DPDK_VER}"
 RUN \
