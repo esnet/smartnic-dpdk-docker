@@ -30,6 +30,11 @@ each of the source code repositories.
 The developers of the ESnet SmartNIC platform can be reached by email
 at smartnic@es.net.
 
+Installing git submodules
+-----------------------
+```
+git submodule update --init --recursive
+```
 
 Building the smartnic-dpdk-docker container
 -------------------------------------------
