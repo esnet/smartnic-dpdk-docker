@@ -45,9 +45,9 @@ COPY patches /patches
 
 # Download build and install DPDK
 ARG DPDK_BASE_URL="https://fast.dpdk.org/rel"
-ARG DPDK_VER="22.07"
-ARG DPDK_TOPDIR="dpdk-${DPDK_VER}"
-#ARG DPDK_TOPDIR="dpdk-stable-${DPDK_VER}"
+ARG DPDK_VER="22.11.2"
+#ARG DPDK_TOPDIR="dpdk-${DPDK_VER}"
+ARG DPDK_TOPDIR="dpdk-stable-${DPDK_VER}"
 RUN \
   wget -q $DPDK_BASE_URL/dpdk-$DPDK_VER.tar.xz && \
     tar xf dpdk-$DPDK_VER.tar.xz && \
@@ -77,7 +77,7 @@ RUN \
   rm -rf /var/lib/apt/lists/*
 
 ARG PKTGEN_BASE_URL="https://github.com/pktgen/Pktgen-DPDK/archive/refs/tags"
-ARG PKTGEN_VER=22.07.1
+ARG PKTGEN_VER=23.03.0
 ARG PKTGEN_TOPDIR="Pktgen-DPDK-pktgen-${PKTGEN_VER}"
 RUN \
   wget -q $PKTGEN_BASE_URL/pktgen-$PKTGEN_VER.tar.gz && \
