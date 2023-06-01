@@ -41,7 +41,7 @@ RUN \
   rm -rf /var/lib/apt/lists/*
 
 COPY xilinx-qdma-for-opennic/QDMA/DPDK /QDMA/DPDK
-COPY 0000-dpdk-include-xilinx-qdma-driver.patch /0000-dpdk-include-xilinx-qdma-driver.patch
+COPY patches /patches
 
 # Download build and install DPDK
 ARG DPDK_BASE_URL="https://fast.dpdk.org/rel"
@@ -54,8 +54,8 @@ RUN \
     rm dpdk-$DPDK_VER.tar.xz && \
     cd $DPDK_TOPDIR && \
     ln -s /QDMA/DPDK/drivers/net/qdma ./drivers/net && \
-    patch -p 1 < /0000-dpdk-include-xilinx-qdma-driver.patch && \
     meson build && \
+    patch -p 1 < /patches/0000-dpdk-include-xilinx-qdma-driver.patch && \
     cd build && \
     ninja && \
     ninja install && \
