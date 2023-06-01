@@ -1,17 +1,18 @@
-diff -U3 --recursive dpdk-22.07-pristine/drivers/net/meson.build dpdk-22.07/drivers/net/meson.build
---- dpdk-22.07-pristine/drivers/net/meson.build	2022-07-17 08:58:00.000000000 -0400
-+++ dpdk-22.07/drivers/net/meson.build	2023-02-13 17:18:37.413659162 -0500
-@@ -48,6 +48,7 @@
-         'octeontx_ep',
+diff -r -u dpdk-stable-22.11.2-pristine/drivers/net/meson.build dpdk-stable-22.11.2/drivers/net/meson.build
+--- dpdk-stable-22.11.2-pristine/drivers/net/meson.build	2023-05-06 04:06:26.000000000 -0400
++++ dpdk-stable-22.11.2/drivers/net/meson.build	2023-06-01 19:41:27.150015508 -0400
+@@ -51,6 +51,7 @@
+         'octeon_ep',
          'pcap',
          'pfe',
 +        'qdma',
          'qede',
          'ring',
          'sfc',
-diff -U3 --recursive dpdk-22.07-pristine/usertools/dpdk-devbind.py dpdk-22.07/usertools/dpdk-devbind.py
---- dpdk-22.07-pristine/usertools/dpdk-devbind.py	2022-07-17 08:58:00.000000000 -0400
-+++ dpdk-22.07/usertools/dpdk-devbind.py	2023-02-13 17:18:37.413659162 -0500
+Only in dpdk-stable-22.11.2/drivers/net: meson.build.orig
+diff -r -u dpdk-stable-22.11.2-pristine/usertools/dpdk-devbind.py dpdk-stable-22.11.2/usertools/dpdk-devbind.py
+--- dpdk-stable-22.11.2-pristine/usertools/dpdk-devbind.py	2023-05-06 04:06:26.000000000 -0400
++++ dpdk-stable-22.11.2/usertools/dpdk-devbind.py	2023-06-01 19:41:27.150015508 -0400
 @@ -75,7 +75,13 @@
  virtio_blk = {'Class': '01', 'Vendor': "1af4", 'Device': '1001,1042',
                      'SVendor': None, 'SDevice': None}
