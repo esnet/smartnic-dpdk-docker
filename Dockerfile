@@ -54,8 +54,8 @@ RUN \
     rm dpdk-$DPDK_VER.tar.xz && \
     cd $DPDK_TOPDIR && \
     ln -s /QDMA/DPDK/drivers/net/qdma ./drivers/net && \
-    meson build && \
     patch -p 1 < /patches/0000-dpdk-include-xilinx-qdma-driver.patch && \
+    meson setup build && \
     cd build && \
     ninja && \
     ninja install && \
