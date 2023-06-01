@@ -55,7 +55,7 @@ RUN \
     cd $DPDK_TOPDIR && \
     ln -s /QDMA/DPDK/drivers/net/qdma ./drivers/net && \
     patch -p 1 < /patches/0000-dpdk-include-xilinx-qdma-driver.patch && \
-    meson setup build && \
+    meson setup build -Denable_drivers=net/af_packet,net/pcap,net/qdma,net/ring,net/tap,net/virtio && \
     cd build && \
     ninja && \
     ninja install && \
