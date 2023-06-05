@@ -41,11 +41,11 @@ RUN \
   rm -rf /var/lib/apt/lists/*
 
 COPY xilinx-qdma-for-opennic/QDMA/DPDK /QDMA/DPDK
-COPY 0000-dpdk-include-xilinx-qdma-driver.patch /0000-dpdk-include-xilinx-qdma-driver.patch
+COPY patches /patches
 
 # Download build and install DPDK
 ARG DPDK_BASE_URL="https://fast.dpdk.org/rel"
-ARG DPDK_VER="21.11.2"
+ARG DPDK_VER="22.11.2"
 #ARG DPDK_TOPDIR="dpdk-${DPDK_VER}"
 ARG DPDK_TOPDIR="dpdk-stable-${DPDK_VER}"
 RUN \
@@ -54,8 +54,8 @@ RUN \
     rm dpdk-$DPDK_VER.tar.xz && \
     cd $DPDK_TOPDIR && \
     ln -s /QDMA/DPDK/drivers/net/qdma ./drivers/net && \
-    patch -p 1 < /0000-dpdk-include-xilinx-qdma-driver.patch && \
-    meson build && \
+    patch -p 1 < /patches/0000-dpdk-include-xilinx-qdma-driver.patch && \
+    meson setup build -Denable_drivers=net/af_packet,net/pcap,net/qdma,net/ring,net/tap,net/virtio && \
     cd build && \
     ninja && \
     ninja install && \
@@ -77,7 +77,7 @@ RUN \
   rm -rf /var/lib/apt/lists/*
 
 ARG PKTGEN_BASE_URL="https://github.com/pktgen/Pktgen-DPDK/archive/refs/tags"
-ARG PKTGEN_VER=22.04.1
+ARG PKTGEN_VER=23.03.0
 ARG PKTGEN_TOPDIR="Pktgen-DPDK-pktgen-${PKTGEN_VER}"
 RUN \
   wget -q $PKTGEN_BASE_URL/pktgen-$PKTGEN_VER.tar.gz && \
