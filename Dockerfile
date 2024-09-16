@@ -1,5 +1,5 @@
 ARG DOCKERHUB_PROXY
-FROM ${DOCKERHUB_PROXY}library/ubuntu:focal
+FROM ${DOCKERHUB_PROXY}library/ubuntu:jammy
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV LC_ALL C.UTF-8
@@ -98,8 +98,6 @@ RUN \
   apt-get install -y --no-install-recommends \
     iproute2 \
     jq \
-    libgrpc++1 \
-    libprotobuf17 \
     lsb-release \
     pciutils \
     python3-scapy \
