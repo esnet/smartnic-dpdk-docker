@@ -17,14 +17,16 @@ default:
   tags:
     - ht-docker
 
-container_scanning:
-  variables:
-    TRIVY_TIMEOUT: "1h"
-
 include:
   - template: 'Workflows/Branch-Pipelines.gitlab-ci.yml'
   - project: 'security/container-scanning'
     file: '.ESnet-container-scan.yml'
+  - component: $CI_SERVER_FQDN/ht/cicd-common/harbor-cve@main
+    inputs:
+      harbor_host:    $HSITE
+      harbor_user:    $HUSER_CVE
+      harbor_token:   $HTOKEN_CVE
+      harbor_project: $CI_PROJECT_NAMESPACE
 
 build:
   stage: build
@@ -35,6 +37,21 @@ build:
     - docker build --pull -t $INTERNAL_IMAGE_TAG .
     - docker push $INTERNAL_IMAGE_TAG
   timeout: 2h
+
+pull_cve_allowlist:
+  extends: .harbor_cve_allowlist
+
+container_scanning:
+  variables:
+    TRIVY_TIMEOUT: "1h"
+    CS_REGISTRY_USER: $HUSER_RO
+    CS_REGISTRY_PASSWORD: $HTOKEN_RO
+    CS_IMAGE: $INTERNAL_IMAGE_TAG
+  # use 'dependencies' here rather than 'needs' since the gitlab container scanning
+  # include sets 'dependencies: []' which takes precedence over 'needs'
+  dependencies:
+    - pull_cve_allowlist
+    - build
 
 wharf_release:
   stage: push

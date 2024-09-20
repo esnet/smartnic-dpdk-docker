@@ -1,12 +1,13 @@
 ARG DOCKERHUB_PROXY
-FROM ${DOCKERHUB_PROXY}library/ubuntu:focal
+FROM ${DOCKERHUB_PROXY}library/ubuntu:jammy
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV LC_ALL C.UTF-8
 ENV LANG C.UTF-8
 
 # Configure local ubuntu mirror as package source
-COPY sources.list /etc/apt/sources.list
+RUN \
+  sed -i -re 's|(http://)([^/]+.*)/|\1linux.mirrors.es.net/ubuntu|g' /etc/apt/sources.list
 
 RUN \
   ln -fs /usr/share/zoneinfo/UTC /etc/localtime && \
@@ -98,8 +99,6 @@ RUN \
   apt-get install -y --no-install-recommends \
     iproute2 \
     jq \
-    libgrpc++1 \
-    libprotobuf17 \
     lsb-release \
     pciutils \
     python3-scapy \
