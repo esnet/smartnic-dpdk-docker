@@ -1,22 +1,4 @@
-image: docker:20.10.10
-
-variables:
-  DOCKER_DRIVER: overlay2
-  DOCKER_TLS_CERT_DIR: ""
-  INTERNAL_IMAGE_TAG: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_SLUG:$CI_COMMIT_SHA
-
-services:
-  - docker:20.10.10-dind
-
-stages:
-  - build
-  - test
-  - push
-
-default:
-  tags:
-    - ht-docker
-
+---
 include:
   - template: 'Workflows/Branch-Pipelines.gitlab-ci.yml'
   - project: 'security/container-scanning'
@@ -28,53 +10,56 @@ include:
       harbor_token:   $HTOKEN_CVE
       harbor_project: $CI_PROJECT_NAMESPACE
 
-build:
+stages:
+  - build
+  - test
+
+package:
   stage: build
+  image: docker:20.10.10
+  services:
+    - docker:20.10.10-dind
+  tags:
+    - ht-docker
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
+    # example PUBLISH_TAG: wharf.es.net/ht/hightouch-swdev-docker:v13
+    PUBLISH_TAG: $HSITE/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_PIPELINE_ID-g$CI_COMMIT_SHORT_SHA
   script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build --pull -t $INTERNAL_IMAGE_TAG .
-    - docker push $INTERNAL_IMAGE_TAG
-  timeout: 2h
+    # Auth to external registry
+    - docker login -u "$HUSER" -p "$HTOKEN" "$HSITE"
+
+    # Build and push the image
+    - docker build --pull -t $PUBLISH_TAG$TAG_SUFFIX .
+    - docker push $PUBLISH_TAG$TAG_SUFFIX
+
+    # Capture the full image URL
+    - |
+      cat <<_EOF > package.env
+      SMARTNIC_DPDK_IMAGE_URI=$PUBLISH_TAG$TAG_SUFFIX
+      _EOF
+    - cat package.env
+  timeout: 30m
+  artifacts:
+    reports:
+      dotenv:
+        package.env
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+    - if: '$CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH'
+      variables:
+        TAG_SUFFIX: -dev
 
 pull_cve_allowlist:
   extends: .harbor_cve_allowlist
 
 container_scanning:
   variables:
-    TRIVY_TIMEOUT: "1h"
     CS_REGISTRY_USER: $HUSER_RO
     CS_REGISTRY_PASSWORD: $HTOKEN_RO
-    CS_IMAGE: $INTERNAL_IMAGE_TAG
+    CS_IMAGE: $SMARTNIC_DPDK_IMAGE_URI
   # use 'dependencies' here rather than 'needs' since the gitlab container scanning
   # include sets 'dependencies: []' which takes precedence over 'needs'
   dependencies:
     - pull_cve_allowlist
-    - build
-
-wharf_release:
-  stage: push
-  variables:
-    # example PUBLISH_TAG: wharf.es.net/ht/hightouch-swdev-docker:v13
-    PUBLISH_TAG: $HSITE/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_PIPELINE_ID-g$CI_COMMIT_SHORT_SHA
-    GIT_STRATEGY: none
-  script:
-    # Auth and pull the image from gitlab
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker pull $INTERNAL_IMAGE_TAG
-
-    # Tag the image for release
-    - docker tag $INTERNAL_IMAGE_TAG $PUBLISH_TAG$TAG_SUFFIX
-
-    # Auth and push to external registry
-    - docker login -u "$HUSER" -p "$HTOKEN" "$HSITE"
-    - docker push $PUBLISH_TAG$TAG_SUFFIX
-  timeout: 2h
-  rules:
-    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
-    - if: '$CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH'
-      when: manual
-      allow_failure: true
-      variables:
-        TAG_SUFFIX: -dev
+    - package
