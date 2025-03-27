@@ -16,9 +16,9 @@ stages:
 
 package:
   stage: build
-  image: docker:20.10.10
+  image: docker:26.1
   services:
-    - docker:20.10.10-dind
+    - docker:26.1-dind
   tags:
     - ht-docker
   variables:
