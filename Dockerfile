@@ -49,6 +49,9 @@ ARG DPDK_BASE_URL="https://fast.dpdk.org/rel"
 ARG DPDK_VER="22.11.2"
 #ARG DPDK_TOPDIR="dpdk-${DPDK_VER}"
 ARG DPDK_TOPDIR="dpdk-stable-${DPDK_VER}"
+ARG DPDK_PLATFORM
+ARG DPDK_CPU_INSTRUCTION_SET
+
 RUN \
   wget -q $DPDK_BASE_URL/dpdk-$DPDK_VER.tar.xz && \
     tar xf dpdk-$DPDK_VER.tar.xz && \
@@ -56,7 +59,7 @@ RUN \
     cd $DPDK_TOPDIR && \
     ln -s /QDMA/DPDK/drivers/net/qdma ./drivers/net && \
     patch -p 1 < /patches/0000-dpdk-include-xilinx-qdma-driver.patch && \
-    meson setup build -Denable_drivers=net/af_packet,net/pcap,net/qdma,net/ring,net/tap,net/virtio && \
+    meson setup build -Dplatform=${DPDK_PLATFORM:-native} -Dcpu_instruction_set=${DPDK_CPU_INSTRUCTION_SET:-native} -Denable_drivers=net/af_packet,net/pcap,net/qdma,net/ring,net/tap,net/virtio && \
     cd build && \
     ninja && \
     ninja install && \

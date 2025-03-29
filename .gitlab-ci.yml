@@ -26,18 +26,37 @@ package:
     GIT_SUBMODULE_STRATEGY: recursive
     # example PUBLISH_TAG: wharf.es.net/ht/hightouch-swdev-docker:v13
     PUBLISH_TAG: $HSITE/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_PIPELINE_ID-g$CI_COMMIT_SHORT_SHA
+
+    # Target all x86_64 targets generically
+    DPDK_PLATFORM: generic
+    DPDK_CPU_INSTRUCTION_SET: generic
+    ARCH_SUFFIX: -generic
+
+    # Target Intel specifically
+    #DPDK_PLATFORM: native
+    #DPDK_CPU_INSTRUCTION_SET: cascadelake
+    #ARCH_SUFFIX: -intel
+
+    # Target AMD specifically
+    #DPDK_PLATFORM: native
+    #DPDK_CPU_INSTRUCTION_SET: znver2
+    #ARCH_SUFFIX: -amd
   script:
     # Auth to external registry
     - docker login -u "$HUSER" -p "$HTOKEN" "$HSITE"
 
     # Build and push the image
-    - docker build --pull -t $PUBLISH_TAG$TAG_SUFFIX .
-    - docker push $PUBLISH_TAG$TAG_SUFFIX
+    - |
+      docker build --pull -t $PUBLISH_TAG$ARCH_SUFFIX$TAG_SUFFIX \
+        --build-arg DPDK_PLATFORM=${DPDK_PLATFORM} \
+        --build-arg DPDK_CPU_INSTRUCTION_SET=${DPDK_CPU_INSTRUCTION_SET} \
+        .
+    - docker push $PUBLISH_TAG$ARCH_SUFFIX$TAG_SUFFIX
 
     # Capture the full image URL
     - |
       cat <<_EOF > package.env
-      SMARTNIC_DPDK_IMAGE_URI=$PUBLISH_TAG$TAG_SUFFIX
+      SMARTNIC_DPDK_IMAGE_URI=$PUBLISH_TAG$ARCH_SUFFIX$TAG_SUFFIX
       _EOF
     - cat package.env
   timeout: 30m
