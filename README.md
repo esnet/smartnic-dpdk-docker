@@ -30,6 +30,21 @@ each of the source code repositories.
 The developers of the ESnet SmartNIC platform can be reached by email
 at smartnic@es.net.
 
+# Deprecation Notice
+
+This repository is no longer being actively maintained.  **No new
+features or security updates will be provided in this repository.**
+This read-only repository is provided for users who are stuck on older
+versions of the ESnet SmartNIC platform and who are unable to upgrade.
+
+As of 17 Nov 2025, the content from this repository has been absorbed
+directly into the `esnet-smartnic-fw` repository and will be
+maintained in that new location from now on.
+
+Ref: https://github.com/esnet/esnet-smartnic-fw/commit/cf5725f645d8ca9f6d47b3cf6b55c2b5d7a2890b
+
+# Instructions to build the **deprecated, unmaintained** content of this repo
+
 Installing git submodules
 -----------------------
 ```
